@@ -1,7 +1,33 @@
 import { ponder } from "@/generated";
+import { zeroAddress } from "viem";
+
+ponder.on("ERC4626:Transfer", async ({ event, context }) => {
+  const { Account, TransferEvent } = context.db;
+
+  // Create an Account for the sender, or update the balance if it already exists.
+  await Account.upsert({
+    id: event.args.from,
+  });
+  // Create an Account for the receiver, or update if needed
+  await Account.upsert({
+    id: event.args.to,
+  });
+
+  // Update the token
+  await TransferEvent.create({
+    id: event.log.id,
+    data: {
+      fromId: event.args.from,
+      toId: event.args.to,
+      value: event.args.amount,
+      timestamp: Number(event.block.timestamp),
+    },
+  });
+});
 
 ponder.on("ERC4626:Deposit", async ({ event, context }) => {
-  const { Account, Token, DepositEvent, ExchangeRate, Vault } = context.db;
+  const { Account, DepositEvent, TransferEvent, ExchangeRate, Vault } =
+    context.db;
 
   // Create an Account for the depositor, or update the balance if it already exists.
   await Account.upsert({
@@ -11,17 +37,6 @@ ponder.on("ERC4626:Deposit", async ({ event, context }) => {
   // Create an Account for the deposit recipient, or update the balance if it already exists.
   await Account.upsert({
     id: event.args.owner,
-  });
-
-  // Update the token
-  await Token.upsert({
-    id: event.args.tokenId,
-    create: {
-      ownerId: event.args.to,
-    },
-    update: {
-      ownerId: event.args.to,
-    },
   });
 
   // Update the deposit
@@ -62,7 +77,7 @@ ponder.on("ERC4626:Deposit", async ({ event, context }) => {
   });
 });
 ponder.on("ERC4626:Withdraw", async ({ event, context }) => {
-  const { Account, Token, WithdrawEvent, ExchangeRate, Vault } = context.db;
+  const { Account, WithdrawEvent, ExchangeRate, Vault } = context.db;
 
   // Create an Account for the account triggering the withdraw, or update the balance if it already exists.
   await Account.upsert({
@@ -72,17 +87,6 @@ ponder.on("ERC4626:Withdraw", async ({ event, context }) => {
   // Create an Account for the asset recipient, or update the balance if it already exists.
   await Account.upsert({
     id: event.args.owner,
-  });
-
-  // Update the token
-  await Token.upsert({
-    id: event.args.tokenId,
-    create: {
-      ownerId: event.args.to,
-    },
-    update: {
-      ownerId: event.args.to,
-    },
   });
 
   // Update the Withdraw

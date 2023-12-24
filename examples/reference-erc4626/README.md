@@ -1,6 +1,6 @@
 # Example ERC721 token API
 
-This example shows how to create a GraphQL API for an ERC721 token using Ponder. It uses the Smol Brains NFT contract on Arbitrum.
+This example shows how to create a GraphQL API for an ERC4626 token using Ponder. It uses the Smol Brains NFT contract on Arbitrum.
 
 ## Sample queries
 
@@ -8,7 +8,7 @@ This example shows how to create a GraphQL API for an ERC721 token using Ponder.
 
 ```graphql
 {
-  account(id: "0x2B8E4729672613D69e5006a97dD56A455389FB2b") {
+  account(id: "0x2b95A1Dcc3D405535f9ed33c219ab38E8d7e0884") {
     id
     tokens {
       id

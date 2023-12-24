@@ -11,7 +11,17 @@ export default createSchema((p) => ({
     id: p.bytes(),
     balance: p.bigint(),
   }),
+  TransferEvent: p.createTable({
+    id: p.string(),
+    timestamp: p.int(),
+    fromId: p.bytes().references("Account.id"),
+    toId: p.bytes().references("Account.id"),
 
+    from: p.one("Account.id"),
+    to: p.one("Account.id"),
+
+    value: p.bigint(),
+  }),
   DepositEvent: p.createTable({
     id: p.string(),
     timestamp: p.int(),
