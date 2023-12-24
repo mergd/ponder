@@ -1,5 +1,5 @@
 {
-  "name": "ponder-examples-reference-erc721",
+  "name": "ponder-examples-reference-erc4626",
   "private": true,
   "type": "module",
   "scripts": {
